@@ -5,10 +5,14 @@ import subprocess
 app = Flask(__name__)
 CORS(app)
 
+@app.route("/")
+def home():
+    return "Trading API is running 🚀"
+
 @app.route("/analyze", methods=["POST"])
 def analyze():
     data = request.get_json()
-    ticker = data.get("ticker", "").strip()
+    ticker = data.get("ticker", "AAPL")
 
     try:
         result = subprocess.run(
@@ -17,16 +21,11 @@ def analyze():
             text=True
         )
 
-        output = result.stdout + "\n" + result.stderr
+        output = result.stdout + result.stderr
+        return jsonify({"result": output})
 
     except Exception as e:
-        output = f"❌ خطأ: {str(e)}"
-
-    return jsonify({"result": output})
-
-
-import os
+        return jsonify({"error": str(e)})
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=5000)
