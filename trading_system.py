@@ -26,14 +26,17 @@ import time
 import logging
 from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict
-from typing import Optional
 
 import numpy as np
 import pandas as pd
 import requests
 import yfinance as yf
-from dotenv import load_dotenv
 
+from alpaca.data.historical import StockHistoricalDataClient
+from alpaca.data.requests import StockBarsRequest
+from alpaca.data.timeframe import TimeFrame
+
+from dotenv import load_dotenv
 # Alpaca SDK
 try:
     from alpaca.trading.client import TradingClient
@@ -779,18 +782,20 @@ def interactive_mode():
 
 
 # ──────────────────────────────────────────────────────────────
-# 10. ENTRY POINT
+# 10. ENTRY POINT (FIXED)
 # ──────────────────────────────────────────────────────────────
+
 if __name__ == "__main__":
+    print("تشغيل التحليل...\n")
+
+    ts = TradingSystem()
+
     import sys
-    ticker = sys.argv[1]
-    import sys
-    print("تشغيل التحليل...")  
+
+    # إذا فيه رمز سهم
     if len(sys.argv) > 1:
-        # استخدام من سطر الأوامر: python trading_system.py AAPL
-        ts = TradingSystem()
         for sym in sys.argv[1:]:
             ts.analyze(sym.upper())
     else:
-        # الوضع التفاعلي
+        # بدون مدخلات → وضع تفاعلي
         interactive_mode()
